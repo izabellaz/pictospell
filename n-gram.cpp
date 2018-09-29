@@ -43,8 +43,7 @@ using namespace std;
             c++; 
 
         }
-        // if(key.size() != maps.at(0).size())
-        //     cout << "SOMETHIG WRONGGG" << endl; 
+
         return; 
     }
 
@@ -69,32 +68,31 @@ using namespace std;
         string di = ""; 
         if(v.size() == 0){
             vector<Node> v;
-            // cout << "EXIT" << endl; 
+            cout << "EXIT" << endl; 
             v.push_back(Node("", 0));
             return v; 
         }
 
         if(v.size() >= 2){
             tri = v.at(v.size()- 2) + " " + v.at(v.size() - 1); 
-            // cout << "    TRI:: " << tri << endl; 
+            //cout << "    TRI:: " << tri << endl; 
         }
         if(v.size() >= 1){
             di = v.at(v.size()-1); 
         }
         // pair<string, double> p;
+
         if(tri != "" && maps.at(2).find(tri) != maps.at(2).end()){
             // cout << maps.at(2).at("being a").at(0).s << endl; 
-            // cout << "SIZE "<< maps.at(2).find(tri)->second.size() << endl; 
-            // cout << "FOUND: in tri " << maps.at(2).find(tri)->second.at(1).s << endl;  
+            //cout << "SIZE "<< maps.at(2).find(tri)->second.size() << endl; 
+            //cout << "FOUND: in tri " << maps.at(2).find(tri)->second.at(1).s << endl;  
             return maps.at(2).find(tri)->second;
         }
         if(di != "" && maps.at(1).find(di) != maps.at(1).end()){
-            // cout << "FOUND: in di " << endl;  
+            cout << "FOUND: in di " << endl;  
             return maps.at(1).find(di)->second;
         }
         else{
-            // string s = n.find(s)->first; 
-            // double d = n.find(s)->second; // return 0 vector? // change 
             vector<Node> v;
             v.push_back(Node("", 0));
             return v; 
@@ -158,15 +156,9 @@ using namespace std;
 
     }
     void model::load(istream &is3, istream &is2, istream &is1){
-        //populatekey(); 
-        // cout << "START" << endl;
-        lambdas.push_back(0.001); //0.001 0.17 0.29 0.639
-        lambdas.push_back(0.17);
-        lambdas.push_back(0.29);
-        lambdas.push_back(0.639);
-        // cout << l1 << l2 << l3 << lZ << endl; 
-        int size3 = 1020006;
-        int size2 = 1020385; 
+
+        int size3 = 244045; // 1020006 entries
+        int size2 = 47802; // 1020385 entries
         int size1 = 5000; 
         
         //load in unigram  
@@ -179,7 +171,6 @@ using namespace std;
         double total1 = 3.29795e+08; 
         map<string, vector<Node> > temp; 
         for(int i = 0; i < size1; ++i){
-            // cout << "HELLO" << endl;
             is1 >> trash; // number ordering the list = trash
             is1 >> x;
             is1 >> t; // part of speech = trash 
@@ -187,19 +178,15 @@ using namespace std;
             is1 >> trash;  
             num = num / total1;
             temp[x].push_back(Node(x, num)); 
-            //maps.at(0)[a] // not working out of range thrown
-            // .push_back(Node(a, num));
-
-            // cout << a << " " << num << endl; 
+            //cout << x << " " << num << endl; 
         }
-        // cout << "HELLO" << endl; 
-
-        maps.push_back(temp); 
+   
+        maps[0] = (temp); 
 
        
 
         //Bigram
-        // cout << size1 << endl; 
+
         int vs; 
         double total2; 
 
@@ -209,32 +196,41 @@ using namespace std;
         double num1;
         map<string, vector<Node> > temp1; 
 
-        for(int j = 0; j < size2; ++j){
+        for(int j = 0; j < size2 + 2; ++j){
 
             is2 >> vs;
+            //cout << vs << endl; 
             is2 >> total2; 
+            //cout << total2 << endl; 
 
             is2 >> num1;
+            //cout << num1 << endl; 
             is2 >> b; 
+            //cout << b << endl; 
             is2 >> c; 
+            //cout << c << endl; 
 
             num1 = num1/total2; 
             
             temp1[b].push_back(Node(c, num1)); 
+            //cout << b << " " << c << " " << num1 << endl; 
+            vs = vs - 1; 
+            if(vs > 0){
+                for(int k = 0; k < vs; ++k){
 
-
-            for(int k = 0; k < vs-1; ++k){
-
-                is2 >> num1;
-                is2 >> b;
-                is2 >> c;
-                num1 = num1/total2; 
-                temp1[b].push_back(Node(c, num1)); 
-
+                    is2 >> num1;
+                    is2 >> b;
+                    is2 >> c;
+                    num1 = num1/total2; 
+                    temp1[b].push_back(Node(c, num1)); 
+                    //cout << b << " " << c << " " << num1 << endl; 
+                }
             }
         }
 
-        maps.push_back(temp1);
+        maps[1] = (temp1);
+
+ 
 
 
         // Trigram 
@@ -244,7 +240,9 @@ using namespace std;
         double total3 = 0; 
 
         map<string, vector<Node> > temp2;  
-        for(int l = 0; l < size3; ++l){ 
+
+ 
+        for(int l = 0; l < size3 + 2; ++l){ 
             is3 >> vss;
             is3 >> total3; 
             is3 >> num2;
@@ -253,11 +251,14 @@ using namespace std;
             is3 >> f;
             is3 >> h; 
             g = d + " " + f;
+            //cout << vss << endl << total3 << endl; 
+            //cout << d << " " << f << " " << h << " " << num2 << endl; 
+ 
 
-   
             num2 = num2/total3; 
             temp2[g].push_back(Node(h, num2)); 
-            
+
+
             if(vss > 1){
 
                 for(int p = 0; p < vss - 1; ++p){
@@ -266,8 +267,10 @@ using namespace std;
                     is3 >> f;
                     is3 >> h; 
                     num2 = num2/total3; 
+                    //cout << d << " " << f << " " << h << " " << num2 << endl; 
                     
-                    temp2[g].push_back(Node(h, num2)); 
+                    temp2[g].push_back(Node(h, num2));
+
                 }
                 d = ""; 
                 f = "";
@@ -275,8 +278,10 @@ using namespace std;
                 h = "";
             }
         }
+        
 
-        maps.push_back(temp2);
+        maps[2] = (temp2);
+        //cout << maps.at(0).size() << "  " << maps.at(1).size() << "  " << maps.at(2).size() << endl; 
  
     }
     
@@ -452,94 +457,90 @@ using namespace std;
        clean_string(s2);
        while (inFS >> s3)
        { 
-        // cout << "ENTER" << endl; 
           clean_string(s3);
-          // cout << "String cleaned" << endl; 
-          // cout << s1 << ' ' << s2 << ' ' << s3 << endl; 
+
           n_gram(s1);
-          // cout << "After n" << endl; 
           m_gram(s1, s2);
-          // cout << "After m" << endl; 
           o_gram(s1, s2, s3); 
-          // cout << "After o" << endl; 
+      
 
           s1 = s2;
           s2 = s3;
        }
-       // cout << "ALMOST THERE" << endl; 
        n_gram(s1);
        n_gram(s2);
        m_gram(s1, s2);
        inFS.close();
         return 0; 
     }
-    double model::prob_of_sentence(string s) const {
-        clean_string(s); 
-        double product = 1; 
+    double model::prob_of_sentence(std::vector<std::string> s) {
+        //clean_string(s); 
+        //cout << s.size() << endl; 
+        double product = 0;
         double num0 = 0;
         double num1 = 0; 
         double num2 = 0; 
         double num3 = 0; 
         double num = 0; 
-        istringstream SS (s); 
+        //istringstream SS (s); 
         string x; 
         string y;
         string z; 
         int oi = -1;
         int mi = -1; 
         
-        SS >> x; 
-        SS >> y;
-
-    while (SS >> z){
-        // cout << x <<"    " << y << "     ";
-        // cout << z <<endl; 
+        if(s.size() >= 3){
+            x = s.at(s.size() - 3);
+            // cout << x << " "; 
+            y = s.at(s.size() - 2); 
+            // cout << y << " ";
+            z = s.at(s.size() - 1);
+            // cout << z << " " << endl;
             string xy = x + " " + y;
-            // cout << "x's find:" << (m.find(x)==m.end()) << endl;
-            // cout << "y's find:" << (m.find(y)==m.end()) << endl;
-            // cout << "z's find:" << (m.find(z)==m.end()) << endl;
             if(maps.at(1).find(x) != maps.at(1).end())
                 mi = find(maps.at(1).find(x)->second, y); 
             if(maps.at(2).find(xy) != maps.at(2).end())
                 oi = find(maps.at(2).find(xy)->second, z); 
-            num0 = lambdas.at(3); 
-            num1 = lambdas.at(0) * getn_p(x);
-            num2 = lambdas.at(1) * getm_p(x, y, mi); 
-            num3 = lambdas.at(2) * geto_p(xy, oi); 
+            num0 = lambdas.at(0); 
+            num1 = lambdas.at(1) * getn_p(x);
+            num2 = lambdas.at(2) * getm_p(x, y, mi); 
+            num3 = lambdas.at(3) * geto_p(xy, oi); 
             num = num0 + num1 + num2 + num3;
-            // cout << num0 << "   " << num1 << "   " << num2 << "   " << num3 << endl; 
             num = log2(num) * -1; 
-            product = product + num; 
-            // cout << product << "    " << num << endl;
+            return num;  
+        }
 
-            x = y; 
-            y = z; 
-            num = 0; 
-            num0 = 0;
-            num1 = 0; 
-            num2 = 0;
-            num3 = 0;
-    }
-    string xy = x + " " + y;
-    if(maps.at(1).find(x) != maps.at(1).end())
-        mi = find(maps.at(1).find(x)->second, y); 
-    num0 = lambdas.at(3); 
-    num1 = lambdas.at(0) * getn_p(x);
-    num2 = lambdas.at(1) * getm_p(x, y, mi); 
-    num = num0 + num1 + num2;
-    // cout << num0 << "   " << num1 << "   " << num2 << endl; 
-    num = log2(num) * -1; 
-    product = product + num; 
-    // cout << product << "    " << num << endl;   
-    
-    num0 = lambdas.at(3); 
-    num1 = lambdas.at(0) * getn_p(y);
-    num = num0 + num1;
-    // cout << num0 << "   " << num1  << endl; 
-    num = log2(num) * -1; 
-    product = product + num; 
-    // cout << product << "    " << num << endl;   
+        else if(s.size() == 2){
+            x = s.at(s.size()-2);
+            y = s.at(s.size()-1);
+            //string xy = x + " " + y;
+            if(maps.at(1).find(x) != maps.at(1).end())
+                mi = find(maps.at(1).find(x)->second, y); 
+            num0 = lambdas.at(0); 
+            num1 = lambdas.at(1) * getn_p(x);
+            num2 = lambdas.at(2) * getm_p(x, y, mi); 
+            num = num0 + num1 + num2;
+            num = log2(num) * -1; 
+            return num; 
+        }
 
+        else if(s.size()==1){
+            y = s.at(0);
+            num0 = lambdas.at(0); 
+            num1 = lambdas.at(1) * getn_p(y);
+            num = num0 + num1;
+            // cout << num0 << "   " << num1  << endl; 
+            num = log2(num) * -1; 
+            return num; 
+        }
+        else {
+            product = lambdas.at(0);
+            product = log2(product) * -1; 
+            return product; 
+        }
+
+    // cout << product << "    " << num << endl;   
+       // cout << product << endl;
         return product; 
     }
     void model::print_o() const {
@@ -570,10 +571,10 @@ using namespace std;
 
     model::model(string name){
         lambdas.resize(4);
-        lambdas.at(0) = 0.17; // scale rate for trigram
-        lambdas.at(1) = 0.29; // scale rate for bigram
-        lambdas.at(2) = 0.639; // scale rate for unigram
-        lambdas.at(3) = 0.001;
+        lambdas.at(0) = 0.001; // scale rate for blank
+        lambdas.at(1) = 0.44; // scale rate for uni
+        lambdas.at(2) = 0.39; // scale rate for bi
+        lambdas.at(3) = 0.17; // tri
         maps.resize(3);
         this->process(name); 
         this->calculate_p();
@@ -582,19 +583,20 @@ using namespace std;
     }
     model::model(){
         lambdas.resize(4);
-        lambdas.at(0) = 0.17; // scale rate for trigram
-        lambdas.at(1) = 0.29; // scale rate for bigram
-        lambdas.at(2) = 0.639; // scale rate for unigram
-        lambdas.at(3) = 0.001;
+        lambdas.at(0) = 0.001;
+        lambdas.at(1) = 0.44; // scale rate for uni
+        lambdas.at(2) = 0.39; // scale rate for bigram
+        lambdas.at(3) = 0.17; // scale rate for trigram
         maps.resize(3);
     }
 
 
     double model::Test(string sentence) const { 
         
-        double p = prob_of_sentence(sentence); 
+        //double p = prob_of_sentence(sentence); 
 
-        return p;
+      //  return p;
+        return 0; 
         
     }
     

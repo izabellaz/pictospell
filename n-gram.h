@@ -43,14 +43,15 @@ class model{
     void m_gram(std::string x, std::string y);
     void o_gram(std::string l, std::string y, std::string z);
     double getm_p(std::string x, std::string y, double i) const;
-    double getn_p(std::string x) const;
+    
     double geto_p(std::string xy, double i) const;
     void clean_string(std::string &s) const;
     int process(std::string filename); // returns 0 for good 1 for error with file 
 
     
 public:
-    double prob_of_sentence(std::string s) const;
+    double getn_p(std::string x) const;
+    double prob_of_sentence(std::vector<std::string> s);
     void print_o() const;
     bool find(std::string s) const;
     model(std::string name);
