@@ -335,7 +335,14 @@ void add(string& sentence, model& data, vector<pair<double, string> >& edits, ma
             cout << endl; 
             edits.erase( unique( edits.begin(), edits.end() ), edits.end() );
             //cout << "\U0001F5E3" << endl; 
-            for(int y = 0; y < 5; ++y){
+            int max;
+            if(edits.size() < 5){
+              max = edits.size();
+            }
+            else{
+              max = 5;
+            }
+            for(int y = 0; y < max; ++y){
                 cout << y + 1 << ". "; 
                 st = edits.at(y).second;
                 if(e.find(st) != e.end()){
